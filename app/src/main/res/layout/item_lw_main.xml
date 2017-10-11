@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="77px"
+        android:background="@drawable/se_lw_tv_center">
+
+        <TextView
+            android:id="@+id/item_tv_lw_mainName"
+            style="@style/style_lw_tv_center"
+            android:text="@string/tv_Nine_of_courses" />
+        <ImageView
+            android:id="@+id/item_iv_lw_main_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="26px"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="37px"
+            android:src="@drawable/btn_more" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#f0f0f0" />
+
+</LinearLayout>

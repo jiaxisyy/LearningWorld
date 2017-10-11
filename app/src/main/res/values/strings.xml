@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">LearningWorld</string>
+    <string name="tv_ChineseClassics">国学经典</string>
+    <string name="tv_fairy_tale">童话故事</string>
+    <string name="tv_memory_coding">记忆编码</string>
+    <string name="tv_Nine_of_courses">九门功课</string>
+
+</resources>
