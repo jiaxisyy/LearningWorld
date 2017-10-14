@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.hekd.learningworld.ui.VideoActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_top_lucency">
+
+
+        <ImageView
+            android:id="@+id/btn_video_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="18dp"
+            android:layout_marginStart="18dp"
+            android:src="@drawable/btn_back" />
+
+        <TextView
+            android:id="@+id/tv_video_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30px"
+            android:layout_toRightOf="@+id/btn_video_back"
+            android:text="智小巴.mp4"
+            android:textColor="#333333"
+            android:textSize="30px" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_video_back"
+            android:layout_marginTop="13px"
+            android:src="@drawable/topline" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/bg_top_lucency">
+
+        <LinearLayout
+            android:id="@+id/ll_video_play_previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15px"
+            android:background="@drawable/se_video_play_previous"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_play_previous" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_video_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15px"
+            android:layout_toRightOf="@+id/ll_video_play_previous"
+            android:background="@drawable/se_video_play"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_play" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_video_play_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15px"
+            android:layout_toRightOf="@id/ll_video_play"
+            android:background="@drawable/se_video_play_next"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_play_next" />
+
+        </LinearLayout>
+
+
+        <SeekBar
+            android:id="@+id/sb_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ll_video_play"
+            android:layout_toLeftOf="@+id/btn_video_return"
+            android:layout_toRightOf="@+id/ll_video_play_next" />
+
+
+        <ImageView
+            android:id="@+id/btn_video_return"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15px"
+            android:src="@drawable/se_video_play_next" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

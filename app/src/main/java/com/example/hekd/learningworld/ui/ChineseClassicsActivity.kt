@@ -1,5 +1,6 @@
 package com.example.hekd.learningworld.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.support.v7.app.AppCompatActivity
@@ -75,13 +76,11 @@ class ChineseClassicsActivity : AppCompatActivity() {
             override fun itemClick(view: View, position: Int) {
                 //如果点击的是文件，不做任何处理
                 if (currentFiles!![position].isFile) {
-
-
-                    return
+                    startActivity(Intent(this@ChineseClassicsActivity, VideoActivity::class.java))
                 }
                 val temp = currentFiles!![position].listFiles()
                 if (temp == null || temp.size == 0) {
-                    Toast.makeText(applicationContext, "此文件夹不可用或者文件夹为空", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, getString(R.string.dir_null), Toast.LENGTH_SHORT).show()
                     return
                 }
                 currentParent = currentFiles!![position]

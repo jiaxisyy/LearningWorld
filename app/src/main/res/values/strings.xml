@@ -4,5 +4,6 @@
     <string name="tv_fairy_tale">童话故事</string>
     <string name="tv_memory_coding">记忆编码</string>
     <string name="tv_Nine_of_courses">九门功课</string>
+    <string name="dir_null">此文件夹不可用或者文件夹为空</string>
 
 </resources>
