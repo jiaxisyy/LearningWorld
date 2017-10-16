@@ -13,12 +13,14 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_top">
 
-        <ImageView
-            android:id="@+id/iv_lw_main_topName"
+        <TextView
+            android:id="@+id/tv_lw_main_topName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@drawable/bg_learningworld" />
+            android:text="国学经典"
+            android:textColor="#ffffff"
+            android:textSize="36px" />
 
         <ImageView
             android:id="@+id/btn_lw_back"
@@ -38,6 +40,7 @@
             android:layout_marginTop="13px"
             android:src="@drawable/topline" />
     </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

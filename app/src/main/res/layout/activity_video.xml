@@ -5,10 +5,20 @@
     android:layout_height="match_parent"
     tools:context="com.example.hekd.learningworld.ui.VideoActivity">
 
+    <SurfaceView
+        android:id="@+id/sv_video"
+        android:layout_width="match_parent"
+
+        android:layout_height="match_parent" />
+
 
     <RelativeLayout
+        android:id="@+id/rl_videoTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:background="@drawable/bg_top_lucency">
 
 
@@ -43,7 +53,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/relativeLayout"
+        android:id="@+id/rl_videoBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -106,23 +116,59 @@
         </LinearLayout>
 
 
-        <SeekBar
+        <com.example.hekd.learningworld.ui.view.MyVideoSeekBar
             android:id="@+id/sb_video"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/ll_video_play"
-            android:layout_toLeftOf="@+id/btn_video_return"
-            android:layout_toRightOf="@+id/ll_video_play_next" />
+            android:layout_marginTop="30px"
+            android:layout_toLeftOf="@+id/ll_video_fullScreen"
+            android:layout_toRightOf="@+id/ll_video_play_next"
+            android:cropToPadding="true"
+            android:max="100"
+            android:padding="5px"
+            android:progress="0"
+            android:progressDrawable="@drawable/bg_seekbar_progress_drawable"
+            android:thumb="@null" />
+
+        <TextView
+            android:id="@+id/tv_video_nowTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15px"
+            android:layout_alignLeft="@+id/sb_video"
+            android:layout_marginLeft="30px"
+            android:text="00:35"
+            android:textColor="#333333"
+            android:textSize="12px" />
+
+        <TextView
+            android:layout_marginTop="15px"
+            android:id="@+id/tv_video_allTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/sb_video"
+            android:layout_marginRight="30px"
+            android:text="00:35"
+            android:textColor="#333333"
+            android:textSize="12px" />
 
 
-        <ImageView
-            android:id="@+id/btn_video_return"
+        <LinearLayout
+            android:id="@+id/ll_video_fullScreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15px"
-            android:src="@drawable/se_video_play_next" />
+            android:background="@drawable/se_video_play_next"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_full_screen" />
+        </LinearLayout>
     </RelativeLayout>
 
 
