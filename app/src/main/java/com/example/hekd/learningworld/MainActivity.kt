@@ -4,16 +4,19 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Environment
+import android.os.Parcelable
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
 import com.example.hekd.learningworld.adapter.RvAdapter
+import com.example.hekd.learningworld.bean.Constant
 import com.example.hekd.learningworld.ui.ChineseClassicsActivity
 import com.example.hekd.learningworld.ui.VideoActivity
 import com.zhy.autolayout.AutoLayoutActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.IOException
+import java.io.Serializable
 
 
 class MainActivity : AutoLayoutActivity() {
@@ -73,10 +76,13 @@ class MainActivity : AutoLayoutActivity() {
 
     }
 
+    var test: Array<out File>? = null
+
     /*
     * 更新listview
     */
     private fun inflateListView(files: Array<out File>?) {
+
         // TODO Auto-generated method stub
         val list = ArrayList<String>()
         for (i in files!!.indices) {
@@ -96,6 +102,11 @@ class MainActivity : AutoLayoutActivity() {
                     if (file.name.endsWith(".mp4") || file.name.endsWith(".m4v")) {
                         val intent = Intent(this@MainActivity, VideoActivity::class.java)
                         intent.putExtra("VIDEO_PATH", file.path)
+//                        intent.putExtra("VIDEO_FILES", files as Parcelable)
+                        intent.putExtra("VIDEO_POSITION", position)
+                        if(iSendFile!=null){
+                            iSendFile?.sendFile(files as Array<File>)
+                        }
                         startActivity(intent)
                     }
                 } else {
@@ -120,5 +131,16 @@ class MainActivity : AutoLayoutActivity() {
             e.printStackTrace()
         }
 
+    }
+
+
+    var iSendFile: ISendFile? = null
+
+    fun etISendFile(ise: ISendFile) {
+        iSendFile = ise
+    }
+
+    interface ISendFile {
+        fun sendFile(array: Array<File>)
     }
 }
