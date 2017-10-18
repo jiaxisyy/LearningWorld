@@ -6,5 +6,7 @@
     <string name="tv_Nine_of_courses">九门功课</string>
     <string name="dir_null">此文件夹不可用或者文件夹为空</string>
     <string name="learning_world">学习天地</string>
+    <!--视频信息数据库名字-->
+    <string name="db_videos_name">videos-db</string>
 
 </resources>

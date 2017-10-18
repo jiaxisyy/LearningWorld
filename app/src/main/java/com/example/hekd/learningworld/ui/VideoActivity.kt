@@ -1,5 +1,6 @@
 package com.example.hekd.learningworld.ui
 
+import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -11,20 +12,17 @@ import android.view.SurfaceHolder
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.SeekBar
-import com.example.hekd.learningworld.MainActivity
+import android.widget.Toast
 import com.example.hekd.learningworld.R
 import kotlinx.android.synthetic.main.activity_video.*
 import java.io.File
+import java.text.Format
+import java.text.ParsePosition
+import java.text.SimpleDateFormat
+import java.util.*
 
 
-class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener, SeekBar.OnSeekBarChangeListener, SurfaceHolder.Callback, MediaPlayer.OnVideoSizeChangedListener, MainActivity.ISendFile {
-    override fun sendFile(array: Array<File>) {
-        //获取当前position
-        files=array
-
-        println("测试${files!![0].name}")
-
-    }
+class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener, SeekBar.OnSeekBarChangeListener, SurfaceHolder.Callback, MediaPlayer.OnVideoSizeChangedListener {
 
 
     override fun onVideoSizeChanged(p0: MediaPlayer?, p1: Int, p2: Int) {
@@ -35,9 +33,10 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
      * 完成播放
      */
     override fun onCompletion(p0: MediaPlayer?) {
-        isPlaying = false
-        finish()
+//        isPlaying = false
+//        finish()
     }
+
 
     override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
         when (p1) {
@@ -54,10 +53,13 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
     private val handler = object : Handler() {
         override fun handleMessage(msg: Message?) {
             super.handleMessage(msg)
+            val i = msg?.obj as Int
             println("msg======" + msg?.obj)
-            sb_video.progress = msg?.obj as Int
-        }
+            sb_video.progress = i
 
+            val hms = formatter!!.format(i)
+            tv_video_nowTime.text = hms
+        }
     }
 
 
@@ -80,14 +82,14 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
     var isPlaying = true
     var vWidth: Int = 0
     var vHeight: Int = 0
+    var formatter: SimpleDateFormat? = null
 
     override fun onPrepared(player: MediaPlayer?) {
         // 当prepare完成后，该方法触发，在这里我们播放视频
-
+        isPlaying = true
         //首先取得video的宽和高
         vWidth = player!!.videoWidth
         vHeight = player.videoHeight
-
 
         if (vWidth > currDisplay!!.width || vHeight > currDisplay!!.height) {
             //如果video的宽或者高超出了当前屏幕的大小，则要进行缩放
@@ -106,27 +108,9 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
             player.start()
         }
         val max: Int = player.duration
-        tv_video_allTime.text = max.toString()
-        object : Thread() {
-            override fun run() {
-                sb_video.max = max
-
-                while (isPlaying) {
-                    val currentPosition1 = player.currentPosition
-                    val message = Message()
-                    message.obj = currentPosition1
-                    handler.sendMessage(message)
-                    try {
-                        Thread.sleep(500)
-                    } catch (e: Exception) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace()
-                    }
-                }
-            }
-        }.start()
-
-
+        val hms = formatter!!.format(max)
+        tv_video_allTime.text = hms
+        sb_video.max = max
     }
 
     override fun onSeekComplete(p0: MediaPlayer?) {
@@ -168,14 +152,19 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
     var currDisplay: Display? = null
     var isShowControl: Boolean = false
     var files: Array<File>? = null
+    var nowPosition: Int = 0
 
+    var extra: ArrayList<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
-        //默认隐藏视频外围控制键
-//        rl_videoTop.visibility = View.GONE
-//        rl_videoBottom.visibility = View.GONE
+//        默认隐藏视频外围控制键
+        rl_videoTop.visibility = View.GONE
+        rl_videoBottom.visibility = View.GONE
+        formatter = SimpleDateFormat("HH:mm:ss")
+        formatter!!.timeZone = TimeZone.getTimeZone("GMT+00:00")
+
         holder = sv_video.holder
         holder?.addCallback(this)
         holder?.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
@@ -188,62 +177,66 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
         player?.setOnSeekCompleteListener(this)
         player?.setOnVideoSizeChangedListener(this)
         sb_video.setOnSeekBarChangeListener(this)
-
-
         //视频当前文件路径
         val path = intent.getStringExtra("VIDEO_PATH")
         player?.setDataSource(path)
+
+//        player?.start()
         //获取当前position
-        val position = intent.getIntExtra("VIDEO_POSITION",0)
+        val position = intent.getIntExtra("VIDEO_POSITION", 0)
+        nowPosition = position
         println("position=$position")
+        var extra = intent.getSerializableExtra("VIDEO_FILES_PATH") as ArrayList<String>
         //设置视频名字
-        println("测试tv_video_name")
-        MainActivity().etISendFile(this)
-
-//
-//        val extra = intent.getSerializableExtra("VIDEO_FILES")
-
-
-        //视频上一个文件路径
-//        if (position - 1 < 0) {
-//            Toast.makeText(this@VideoActivity, "已经没有文件了", Toast.LENGTH_SHORT).show()
-//        } else {
-//            val path_previous = files!![position - 1].path
-//            player?.setDataSource(path_previous)
-//        }
-//        //视频下一个文件路径
-//        if (position + 1 > files!!.indices as Int) {
-//            Toast.makeText(this@VideoActivity, "已经没有文件了", Toast.LENGTH_SHORT).show()
-//        } else {
-//            val path_next = files!![position + 1].path
-//            player?.setDataSource(path_next)
-//        }
-
+        val indexOf = extra!![position].lastIndexOf("/")
+        tv_video_name.text = extra!![position].substring(indexOf + 1)
 
         currDisplay = windowManager.defaultDisplay
 
-        sv_video.setOnClickListener {
-            //当点击视频就显示控制按钮
 
-//            if (isShowControl) {//显示控制按钮
-//                rl_videoTop.visibility = View.VISIBLE
-//                rl_videoBottom.visibility = View.VISIBLE
-//                isShowControl = false
-//            } else { //隐藏控制按钮
-//                rl_videoTop.visibility = View.INVISIBLE
-//                rl_videoBottom.visibility = View.INVISIBLE
-//                isShowControl = true
-//            }
+        prepareSeekBar()
+        sv_video.setOnClickListener {
+            //            当点击视频就显示控制按钮
+
+            if (isShowControl) {//显示控制按钮
+                rl_videoTop.visibility = View.VISIBLE
+                rl_videoBottom.visibility = View.VISIBLE
+                isShowControl = false
+            } else { //隐藏控制按钮
+                rl_videoTop.visibility = View.INVISIBLE
+                rl_videoBottom.visibility = View.INVISIBLE
+                isShowControl = true
+            }
         }
         //上一个视频
         ll_video_play_previous.setOnClickListener {
-
-
+            //视频上一个文件路径
+            if (nowPosition == 0) {
+                Toast.makeText(this@VideoActivity, "已经没有文件了", Toast.LENGTH_SHORT).show()
+            } else {
+                val path_previous = extra!![nowPosition - 1]
+                player?.reset()
+                player?.setDataSource(path_previous)
+                player?.prepare()
+                val indexOf = extra!![nowPosition - 1].lastIndexOf("/")
+                tv_video_name.text = extra!![nowPosition - 1].substring(indexOf + 1)
+                nowPosition -= 1
+            }
         }
         //下一个视频
         ll_video_play_next.setOnClickListener {
-
-
+            //视频下一个文件路径
+            if (nowPosition == extra.size - 1) {
+                Toast.makeText(this@VideoActivity, "已经没有文件了", Toast.LENGTH_SHORT).show()
+            } else {
+                val path_next = extra!![nowPosition + 1]
+                player?.reset()
+                player?.setDataSource(path_next)
+                player?.prepare()
+                val indexOf = extra!![nowPosition + 1].lastIndexOf("/")
+                tv_video_name.text = extra!![nowPosition + 1].substring(indexOf + 1)
+                nowPosition += 1
+            }
         }
 
         //暂停和播放
@@ -267,6 +260,39 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
             isPlaying = false
             finish()
         }
+    }
+
+    /**
+     * 进度条开启
+     */
+    private fun prepareSeekBar() {
+        object : Thread() {
+            override fun run() {
+                while (isPlaying) {
+                    val currentPosition1 = player?.currentPosition
+                    val message = Message()
+                    message.obj = currentPosition1
+                    handler.sendMessage(message)
+                    try {
+                        Thread.sleep(500)
+                    } catch (e: Exception) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }.start()
+    }
+
+    override fun onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy()
+        if (player!!.isPlaying) {
+            player!!.stop()
+            isPlaying = false
+        }
+        player!!.release()
+        // Activity销毁时停止播放，释放资源。不做这个操作，即使退出还是能听到视频播放的声音
     }
 
 

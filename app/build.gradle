@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 26
@@ -19,7 +20,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    greendao {
+        schemaVersion 1//数据库版本号 创建时间17/10/18
+        daoPackage 'com.example.hekd.learningworld.bean.greendao'
+        targetGenDir 'src/main/java'
+    }
 }
+
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -32,6 +39,8 @@ dependencies {
     compile 'com.zhy:autolayout:1.4.5'
     compile 'com.android.support:design:26.0.0-alpha1'
     testCompile 'junit:junit:4.12'
+    compile 'org.greenrobot:greendao:3.2.2'
+    compile 'org.greenrobot:greendao-generator:3.2.2'
 }
 repositories {
     mavenCentral()
