@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
 import com.example.hekd.learningworld.adapter.RvAdapter
-import com.example.hekd.learningworld.bean.greendao.DaoMaster
 import com.example.hekd.learningworld.ui.VideoActivity
 import com.zhy.autolayout.AutoLayoutActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,6 +21,9 @@ class MainActivity : AutoLayoutActivity() {
     private var currentFiles: Array<File>? = null
     private val ROOT_PATH = Environment.getExternalStorageDirectory().path + "/babacitvd"
     var dbList_paths: ArrayList<String>? = null
+    var dbList_progress: ArrayList<Int>? = null
+    var dbList_maxProgress: ArrayList<Int>? = null
+    var dbList_percent: ArrayList<Float>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,14 +40,21 @@ class MainActivity : AutoLayoutActivity() {
      *初始化数据库
      */
     private fun initGreenDao() {
-        val devOpenHelper = DaoMaster.DevOpenHelper(this, getString(R.string.db_videos_name), null)
-        val daoMaster = DaoMaster(devOpenHelper.writableDatabase)
-        val session = daoMaster.newSession()
-        val gdVideoInfoDao = session.gdVideoInfoDao
+        val gdVideoInfoDao = MyApplication().getSession().gdVideoInfoDao
         val videoInfoList = gdVideoInfoDao.queryBuilder().list()
-        dbList_paths=ArrayList<String>()
+        println("videoInfoList.size======${videoInfoList.size}")
+        dbList_paths = ArrayList<String>()
+        dbList_progress = ArrayList<Int>()
+        dbList_maxProgress = ArrayList<Int>()
+        dbList_percent = ArrayList<Float>()//百分比
         for (i in videoInfoList.indices) {
             dbList_paths!!.add(videoInfoList[i].video_path)
+            dbList_progress!!.add(videoInfoList[i].video_progress)
+            dbList_maxProgress!!.add(videoInfoList[i].video_duration)
+            val f1 = videoInfoList[i].video_progress.toFloat()
+            val f2 = videoInfoList[i].video_duration.toFloat()
+            println("=============="+(f1 / f2))
+            dbList_percent!!.add(f1 / f2)
         }
     }
 
@@ -78,48 +87,49 @@ class MainActivity : AutoLayoutActivity() {
         } else {//没有这个目录
             root.mkdir()
         }
-
     }
 
     var test: Array<out File>? = null
+    var countPlayed = 0
 
     /*
     * 更新listview
     */
     private fun inflateListView(files: Array<out File>?) {
 
+        countPlayed=0
         // TODO Auto-generated method stub
         val list = ArrayList<String>()
         val list_path = ArrayList<String>()
         val list_DirOrFile = ArrayList<Int>()
         val list_isPlayed = ArrayList<Int>()//是否观看过存储
-
-
+        val list_Percent = ArrayList<Float>()
         // 1表示文件,0表示文件夹
         // 1表示已观看,0表示未观看
-
-
         for (i in files!!.indices) {
+
             if (files[i].isFile) {
                 list_DirOrFile.add(1)
                 if (dbList_paths!!.contains(files[i].path)) {//判断是否观看
                     //已观看
                     list_isPlayed.add(1)
+                    list_Percent.add(dbList_percent!![countPlayed])
+                    countPlayed++
                 } else {
                     //未观看
                     list_isPlayed.add(0)
+                    list_Percent.add(0f)
                 }
             } else {
                 list_DirOrFile.add(0)
                 //文件夹默认未观看
                 list_isPlayed.add(0)
+                list_Percent.add(0f)
             }
-
-
             list.add(files[i].name)
             list_path.add(files[i].path)
         }
-        rv_lw_main.adapter = RvAdapter(list as List<String>, list_DirOrFile, list_isPlayed, object : RvAdapter.ItemClickListener {
+        rv_lw_main.adapter = RvAdapter(list as List<String>, list_DirOrFile, list_isPlayed, list_Percent, object : RvAdapter.ItemClickListener {
             override fun itemClick(view: View, position: Int) {
                 val file = currentFiles!![position]
                 //如果点击的是文件，不做任何处理
@@ -150,8 +160,5 @@ class MainActivity : AutoLayoutActivity() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
     }
-
-
 }

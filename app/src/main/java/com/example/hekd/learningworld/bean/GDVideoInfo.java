@@ -17,7 +17,6 @@ public class GDVideoInfo {
     private String video_path;
     @Property(nameInDb = "VIDEO_PROGRESS")//已观看进度
     private int video_progress;
-
     @Property(nameInDb = "VIDEO_DURATION")//总进度
     private int video_duration;
 
@@ -32,14 +31,6 @@ public class GDVideoInfo {
 
     @Generated(hash = 918419838)
     public GDVideoInfo() {
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getVideo_path() {
@@ -64,6 +55,14 @@ public class GDVideoInfo {
 
     public void setVideo_duration(int video_duration) {
         this.video_duration = video_duration;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
 
