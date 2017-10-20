@@ -38,7 +38,7 @@ class RvAdapter(val list: List<String>, val dOrF: List<Int>, val isPlayed: List<
                     if (isPd == 1) {//已观看
                         itemView.item_iv_lw_main_more.visibility = View.INVISIBLE
                         itemView.item_tv_lw_progress.visibility = View.VISIBLE
-                        itemView.item_tv_lw_progress.text = "已观看$per%"// 设置已观看进度
+                        itemView.item_tv_lw_progress.text = "已观看${(per*100).toInt()}%"// 设置已观看进度
                     } else {
                         itemView.item_iv_lw_main_more.setImageResource(R.drawable.iv_no_play)
                     }

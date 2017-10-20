@@ -8,5 +8,8 @@
     <string name="learning_world">学习天地</string>
     <!--视频信息数据库名字-->
     <string name="db_videos_name">videos-db</string>
+    <string name="dialog_isContinue">是否继续播放?</string>
+    <string name="app_no_install">应用没有安装</string>
+    <string name="no_file">已经没有文件了</string>
 
 </resources>
