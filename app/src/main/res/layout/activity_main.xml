@@ -10,7 +10,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="74px"
         android:background="@drawable/bg_top">
 
         <TextView
@@ -31,7 +31,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="18dp"
             android:layout_marginStart="18dp"
-            android:src="@drawable/btn_back" />
+            android:src="@drawable/btn_back_normal" />
 
         <ImageView
             android:layout_width="match_parent"
@@ -41,13 +41,12 @@
             android:src="@drawable/topline" />
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="10px"
         android:background="@drawable/bg_center"
         android:orientation="vertical">
-
 
         <RelativeLayout
             android:id="@+id/rl_lw_main_nine"
@@ -84,19 +83,33 @@
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/tv_lw_line"
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="#f0f0f0" />
+            android:layout_below="@+id/rl_lw_main_nine"
+            android:background="#f0f0f0"
+            android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_lw_main"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tv_lw_line">
 
         </android.support.v7.widget.RecyclerView>
 
-        <include layout="@layout/item_lw_main" />
+        <!--<include layout="@layout/item_lw_main" />-->
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/tv_lw_main_nothing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/tv_lw_main_nothing"
+            android:textColor="#333333"
+            android:textSize="30px"
+            android:visibility="gone" />
+
+    </RelativeLayout>
 
 </LinearLayout>

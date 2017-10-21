@@ -15,7 +15,7 @@
     <RelativeLayout
         android:id="@+id/rl_videoTop"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="74px"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
@@ -31,14 +31,18 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="18dp"
             android:layout_marginStart="18dp"
-            android:src="@drawable/btn_back" />
+            android:cropToPadding="true"
+            android:padding="5px"
+            android:src="@drawable/se_video_back" />
 
         <TextView
             android:id="@+id/tv_video_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="30px"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/btn_video_back"
             android:layout_toRightOf="@+id/btn_video_back"
             android:text="智小巴.mp4"
             android:textColor="#333333"
@@ -55,13 +59,12 @@
     <RelativeLayout
         android:id="@+id/rl_videoBottom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="74px"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:background="@drawable/bg_top_lucency">
 
         <LinearLayout
+
             android:id="@+id/ll_video_play_previous"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -80,6 +83,7 @@
 
 
         <LinearLayout
+
             android:id="@+id/ll_video_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -99,6 +103,7 @@
 
 
         <LinearLayout
+
             android:id="@+id/ll_video_play_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -126,7 +131,7 @@
             android:layout_toRightOf="@+id/ll_video_play_next"
             android:cropToPadding="true"
             android:max="100"
-            android:padding="5px"
+            android:padding="10px"
             android:progress="0"
             android:progressDrawable="@drawable/bg_seekbar_progress_drawable"
             android:thumb="@null" />
@@ -135,20 +140,20 @@
             android:id="@+id/tv_video_nowTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15px"
             android:layout_alignLeft="@+id/sb_video"
             android:layout_marginLeft="30px"
+            android:layout_marginTop="15px"
             android:text="00:35"
             android:textColor="#333333"
             android:textSize="12px" />
 
         <TextView
-            android:layout_marginTop="15px"
             android:id="@+id/tv_video_allTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignRight="@+id/sb_video"
             android:layout_marginRight="30px"
+            android:layout_marginTop="15px"
             android:text="00:35"
             android:textColor="#333333"
             android:textSize="12px" />

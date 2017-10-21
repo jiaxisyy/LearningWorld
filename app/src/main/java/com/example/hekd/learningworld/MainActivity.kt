@@ -17,6 +17,7 @@ import java.io.IOException
 import java.io.Serializable
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.view.KeyEvent
 
 
 class MainActivity : AutoLayoutActivity() {
@@ -28,6 +29,7 @@ class MainActivity : AutoLayoutActivity() {
     var dbList_maxProgress: ArrayList<Int>? = null
     /**启动外部的app包名*/
     var OTHERAPP_PACKAGENAME = "cn.icoxedu.activity_nine_lessons"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -63,6 +65,7 @@ class MainActivity : AutoLayoutActivity() {
             }
         }
     }
+
     /**
      *初始化数据库
      */
@@ -85,12 +88,13 @@ class MainActivity : AutoLayoutActivity() {
      * 初始化界面
      */
     private fun init() {
-
         val root = File(ROOT_PATH)
         if (root.exists()) {
             currentParent = root
             currentFiles = root.listFiles()
-            inflateListView(currentFiles as Array<out File>?)
+            if ((currentFiles as Array<out File>?)?.size != 0) {
+                inflateListView(currentFiles as Array<out File>?)
+            }
             btn_lw_back.setOnClickListener {
                 try {
                     if (!currentParent!!.getCanonicalFile().equals(Environment.getExternalStorageDirectory().path)) {
@@ -109,9 +113,9 @@ class MainActivity : AutoLayoutActivity() {
             }
         } else {//没有这个目录
             root.mkdir()
+            init()
+            tv_lw_main_nothing.visibility = View.VISIBLE
         }
-
-
     }
 
     var test: Array<out File>? = null
@@ -141,8 +145,10 @@ class MainActivity : AutoLayoutActivity() {
         if (substring == ROOT_PATH) {
             /**显示九门功课*/
             rl_lw_main_nine.visibility = View.VISIBLE
+            tv_lw_line.visibility = View.VISIBLE
         } else {
             rl_lw_main_nine.visibility = View.GONE
+            tv_lw_line.visibility = View.GONE
         }
 
         for (i in files!!.indices) {
@@ -207,6 +213,28 @@ class MainActivity : AutoLayoutActivity() {
 
         } catch (e: IOException) {
             e.printStackTrace()
+        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            try {
+                if (!currentParent!!.getCanonicalFile().equals(Environment.getExternalStorageDirectory().path)) {
+                    if (currentParent!!.path.equals(ROOT_PATH)) {
+                        finish()
+                    } else {
+                        currentParent = currentParent!!.getParentFile() //获取上级目录
+                        currentFiles = currentParent!!.listFiles()             //取得当前层所有文件
+                        inflateListView(currentFiles)   //更新列表
+                    }
+                }
+            } catch (e: Exception) {
+                // TODO Auto-generated catch block
+                e.printStackTrace()
+            }
+            return false
+        } else {
+            return super.onKeyDown(keyCode, event)
         }
     }
 }

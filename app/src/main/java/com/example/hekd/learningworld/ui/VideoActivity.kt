@@ -60,7 +60,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
         override fun handleMessage(msg: Message?) {
             super.handleMessage(msg)
             val i = msg?.obj as Int
-            println("msg======" + msg?.obj)
+//            println("msg======" + msg?.obj)
             nowProgress = i
             sb_video.progress = i
             val hms = formatter!!.format(i)
@@ -88,6 +88,11 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
     override fun onPrepared(player: MediaPlayer?) {
         // 当prepare完成后，该方法触发，在这里我们播放视频
         isPlaying = true
+
+//        if(position>0){
+////            player?.start()
+//            player?.seekTo(position)
+//        }
         //首先取得video的宽和高
         vWidth = player!!.videoWidth
         vHeight = player.videoHeight
@@ -107,7 +112,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
             sv_video.layoutParams = RelativeLayout.LayoutParams(vWidth, vHeight)
 
         }
-
         if (progresss == 0) {
             //然后开始播放视频
             player.start()
@@ -154,7 +158,11 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
     }
 
     override fun surfaceDestroyed(p0: SurfaceHolder?) {
-
+        println("surfaceDestroyed   is  execute")
+        if (player!!.isPlaying) {
+            position = player!!.currentPosition
+            player!!.stop()
+        }
     }
 
     override fun surfaceCreated(p0: SurfaceHolder?) {
@@ -172,6 +180,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
         }
     }
 
+    var position = 0
     var currentPosition: Int = 0
     var holder: SurfaceHolder? = null
     var player: MediaPlayer? = null
@@ -219,12 +228,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
         rl_videoBottom.visibility = View.GONE
         sv_video.setOnClickListener {
             //            当点击视频就显示控制按钮
-
-            if (isShowControl) {   //隐藏控制按钮
-                rl_videoTop.visibility = View.INVISIBLE
-                rl_videoBottom.visibility = View.INVISIBLE
-                isShowControl = false
-            } else { //显示控制按钮
+            if (!isShowControl) { //显示控制按钮
                 rl_videoTop.visibility = View.VISIBLE
                 rl_videoBottom.visibility = View.VISIBLE
                 isShowControl = true
@@ -307,22 +311,18 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
                             dialog_error!!.show()
                         }
                     }
-
-
                 }
-
-
             }
         }
         //下一个视频
         ll_video_play_next.setOnClickListener {
             //视频下一个文件路径
             if (nowPosition == extra.size - 1) {
-                Toast.makeText(this@VideoActivity,  getString(R.string.no_file), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@VideoActivity, getString(R.string.no_file), Toast.LENGTH_SHORT).show()
             } else {
                 val path_next = extra!![nowPosition + 1]
                 if (File(path_next).isDirectory) {
-                    Toast.makeText(this@VideoActivity,  getString(R.string.no_file), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@VideoActivity, getString(R.string.no_file), Toast.LENGTH_SHORT).show()
                 } else {
                     try {
                         progresss = 0
@@ -379,20 +379,26 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
         //退出
         btn_video_back.setOnClickListener {
             isPlaying = false
-            //把当前正在播放视频信息存储
-            val query_list = gdVideoInfoDao?.queryBuilder()?.where(GDVideoInfoDao.Properties.Video_path.eq(nowPath))!!.list()
-            if (query_list!!.isEmpty()) {
-                gdVideoInfoDao?.insert(GDVideoInfo(null, nowPath, nowProgress, nowMaxProgress))
-                println("insert data" + nowPath)
-                println("insert data" + nowProgress / nowMaxProgress + "%")
-            } else {
-                val id = query_list[0].id
-                println("id=====================$id")
-                gdVideoInfoDao?.update(GDVideoInfo(id, nowPath, nowProgress, nowMaxProgress))
-                println("update data" + nowPath)
-                println("update data" + nowProgress / nowMaxProgress + "%")
+
+            try {
+                //把当前正在播放视频信息存储
+                val query_list = gdVideoInfoDao?.queryBuilder()?.where(GDVideoInfoDao.Properties.Video_path.eq(nowPath))!!.list()
+                if (query_list!!.isEmpty()) {
+                    gdVideoInfoDao?.insert(GDVideoInfo(null, nowPath, nowProgress, nowMaxProgress))
+                    println("insert data" + nowPath)
+                    println("insert data" + nowProgress / nowMaxProgress + "%")
+                } else {
+                    val id = query_list[0].id
+                    println("id=====================$id")
+                    gdVideoInfoDao?.update(GDVideoInfo(id, nowPath, nowProgress, nowMaxProgress))
+                    println("update data" + nowPath)
+                    println("update data" + nowProgress / nowMaxProgress + "%")
+                }
+            } catch (e: Exception) {
+                println("==========clickBack error===========")
             }
             finish()
+
         }
     }
 
@@ -427,7 +433,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
             player?.start()
         }
     }
-
 
     /**
      * 初始化数据库
@@ -492,6 +497,19 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
         player!!.release()
         // Activity销毁时停止播放，释放资源。不做这个操作，即使退出还是能听到视频播放的声音
     }
+
+    override fun onPause() {
+        super.onPause()
+        player?.pause()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+//        player!!.reset()
+//        player?.start()
+////        player?.setDisplay(holder)
+    }
+
 
 
 }
