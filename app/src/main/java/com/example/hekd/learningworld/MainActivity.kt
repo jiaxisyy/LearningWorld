@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Environment
+import android.os.storage.StorageManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.KeyEvent
 import android.view.View
@@ -33,6 +34,8 @@ class MainActivity : AutoLayoutActivity() {
     var dbList_maxProgress: ArrayList<Int>? = null
     /**启动外部的app包名*/
     var OTHERAPP_PACKAGENAME = "cn.icoxedu.activity_nine_lessons"
+    /**是否有外置SD卡,默认有*/
+    var isExistSDCard = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,22 +91,20 @@ class MainActivity : AutoLayoutActivity() {
         }
     }
 
-    /**
-     * 判断SDCard是否存在 [当没有外挂SD卡时，内置ROM也被识别为存在sd卡]
-     *
-     * @return
-     */
-    fun isSdCardExist(): Boolean {
-        return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
-    }
 
     /**
      * 初始化界面
      */
     private fun init() {
-
-        if (isSdCardExist()) {
-            ROOT_PATH = SdCardUtil.getStoragePath(this, true)+"/babacitvd"
+        val storagePath = SdCardUtil.getStoragePath(this, true)//外置sd卡
+        if (!File(storagePath+ "/babacitvd").exists()) {
+            println("我执行了1")
+            isExistSDCard = false
+        } else {
+            println("我执行了2")
+//            val storagePath = SdCardUtil.getStoragePath(this, true)//外置sd卡
+            isExistSDCard = true
+            ROOT_PATH = storagePath + "/babacitvd"
             val root = File(ROOT_PATH)
             if (root.exists()) {
                 currentParent = root
@@ -128,9 +129,14 @@ class MainActivity : AutoLayoutActivity() {
                     }
                 }
             } else {//没有这个目录
-                root.mkdir()
-                init()
+//                root.mkdir()
+//                init()
 //            tv_lw_main_nothing.visibility = View.VISIBLE
+            }
+        }
+        if (!isExistSDCard) {
+            btn_lw_back.setOnClickListener {
+                finish()
             }
         }
     }
@@ -235,19 +241,23 @@ class MainActivity : AutoLayoutActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            try {
-                if (!currentParent!!.getCanonicalFile().equals(Environment.getExternalStorageDirectory().path)) {
-                    if (currentParent!!.path.equals(ROOT_PATH)) {
-                        finish()
-                    } else {
-                        currentParent = currentParent!!.getParentFile() //获取上级目录
-                        currentFiles = currentParent!!.listFiles()             //取得当前层所有文件
-                        inflateListView(currentFiles)   //更新列表
+            if (isExistSDCard) {
+                try {
+                    if (!currentParent!!.getCanonicalFile().equals(Environment.getExternalStorageDirectory().path)) {
+                        if (currentParent!!.path.equals(ROOT_PATH)) {
+                            finish()
+                        } else {
+                            currentParent = currentParent!!.getParentFile() //获取上级目录
+                            currentFiles = currentParent!!.listFiles()             //取得当前层所有文件
+                            inflateListView(currentFiles)   //更新列表
+                        }
                     }
+                } catch (e: Exception) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
-                // TODO Auto-generated catch block
-                e.printStackTrace()
+            } else {
+                finish()
             }
             return false
         } else {
