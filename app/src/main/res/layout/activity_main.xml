@@ -52,8 +52,7 @@
             android:id="@+id/rl_lw_main_nine"
             android:layout_width="match_parent"
             android:layout_height="77px"
-            android:background="@drawable/se_lw_tv_center"
-            android:visibility="gone">
+            android:background="@drawable/se_lw_tv_center">
 
             <TextView
                 android:id="@+id/item_tv_lw_mainName"
@@ -81,7 +80,11 @@
                 android:textSize="18px"
                 android:visibility="invisible" />
         </RelativeLayout>
-
+        <TextView
+            android:layout_below="@+id/rl_lw_main_nine"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#f0f0f0" />
         <TextView
             android:id="@+id/tv_lw_line"
             android:layout_width="match_parent"

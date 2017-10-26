@@ -1,29 +1,33 @@
 package com.example.hekd.learningworld
 
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Environment
 import android.support.v7.widget.LinearLayoutManager
+import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import com.example.hekd.learningworld.adapter.RvAdapter
 import com.example.hekd.learningworld.bean.greendao.GDVideoInfoDao
 import com.example.hekd.learningworld.ui.VideoActivity
+import com.example.hekd.learningworld.util.SdCardUtil
 import com.zhy.autolayout.AutoLayoutActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.IOException
 import java.io.Serializable
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
-import android.view.KeyEvent
 
 
 class MainActivity : AutoLayoutActivity() {
     private var currentParent: File? = null    //记录当前文件的父文件夹
     private var currentFiles: Array<File>? = null
-    private val ROOT_PATH = Environment.getExternalStorageDirectory().path + "/babacitvd"
+    /**外置存储*/
+    private var ROOT_PATH: String? = null
+    /**内置存储*/
+//    private val ROOT_PATH = Environment.getExternalStorageDirectory().path + "/babacitvd"
     var dbList_paths: ArrayList<String>? = null
     var dbList_progress: ArrayList<Int>? = null
     var dbList_maxProgress: ArrayList<Int>? = null
@@ -85,36 +89,49 @@ class MainActivity : AutoLayoutActivity() {
     }
 
     /**
+     * 判断SDCard是否存在 [当没有外挂SD卡时，内置ROM也被识别为存在sd卡]
+     *
+     * @return
+     */
+    fun isSdCardExist(): Boolean {
+        return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+    }
+
+    /**
      * 初始化界面
      */
     private fun init() {
-        val root = File(ROOT_PATH)
-        if (root.exists()) {
-            currentParent = root
-            currentFiles = root.listFiles()
-            if ((currentFiles as Array<out File>?)?.size != 0) {
-                inflateListView(currentFiles as Array<out File>?)
-            }
-            btn_lw_back.setOnClickListener {
-                try {
-                    if (!currentParent!!.getCanonicalFile().equals(Environment.getExternalStorageDirectory().path)) {
-                        if (currentParent!!.path.equals(ROOT_PATH)) {
-                            finish()
-                        } else {
-                            currentParent = currentParent!!.getParentFile() //获取上级目录
-                            currentFiles = currentParent!!.listFiles()             //取得当前层所有文件
-                            inflateListView(currentFiles)   //更新列表
-                        }
-                    }
-                } catch (e: IOException) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace()
+
+        if (isSdCardExist()) {
+            ROOT_PATH = SdCardUtil.getStoragePath(this, true)+"/babacitvd"
+            val root = File(ROOT_PATH)
+            if (root.exists()) {
+                currentParent = root
+                currentFiles = root.listFiles()
+                if ((currentFiles as Array<out File>?)?.size != 0) {
+                    inflateListView(currentFiles as Array<out File>?)
                 }
+                btn_lw_back.setOnClickListener {
+                    try {
+                        if (!currentParent!!.getCanonicalFile().equals(Environment.getExternalStorageDirectory().path)) {
+                            if (currentParent!!.path.equals(ROOT_PATH)) {
+                                finish()
+                            } else {
+                                currentParent = currentParent!!.getParentFile() //获取上级目录
+                                currentFiles = currentParent!!.listFiles()             //取得当前层所有文件
+                                inflateListView(currentFiles)   //更新列表
+                            }
+                        }
+                    } catch (e: IOException) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace()
+                    }
+                }
+            } else {//没有这个目录
+                root.mkdir()
+                init()
+//            tv_lw_main_nothing.visibility = View.VISIBLE
             }
-        } else {//没有这个目录
-            root.mkdir()
-            init()
-            tv_lw_main_nothing.visibility = View.VISIBLE
         }
     }
 
@@ -237,4 +254,6 @@ class MainActivity : AutoLayoutActivity() {
             return super.onKeyDown(keyCode, event)
         }
     }
+
+
 }
