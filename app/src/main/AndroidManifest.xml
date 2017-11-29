@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".update2.TAllVideoActivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -39,6 +39,8 @@
             android:name=".ui.VideoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop"></activity>
+        <!--<activity android:name=".update2.TAllVideoActivity"/>-->
+        <activity android:name=".update2.MyijkplayerActivity"/>
     </application>
 
 </manifest>

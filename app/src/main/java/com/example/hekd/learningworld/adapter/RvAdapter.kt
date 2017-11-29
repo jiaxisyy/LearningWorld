@@ -50,6 +50,12 @@ class RvAdapter(val list: List<String>, val dOrF: List<Int>, val isPlayed: List<
                 itemClickListener.itemClick(itemView, position)
             }
         }
+        fun bind(name: String) {
+            itemView.item_tv_lw_mainName.text = name
+            itemView.setOnClickListener {
+                itemClickListener.itemClick(itemView, position)
+            }
+        }
     }
 
     interface ItemClickListener {
