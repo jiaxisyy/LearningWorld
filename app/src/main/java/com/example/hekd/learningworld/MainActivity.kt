@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Environment
-import android.os.storage.StorageManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.KeyEvent
 import android.view.View
@@ -22,13 +21,19 @@ import java.io.IOException
 import java.io.Serializable
 
 
+private val arrayList: ArrayList<String>
+    get() {
+        val list_videoAllPath = ArrayList<String>()
+        return list_videoAllPath
+    }
+
 class MainActivity : AutoLayoutActivity() {
     private var currentParent: File? = null    //记录当前文件的父文件夹
     private var currentFiles: Array<File>? = null
     /**外置存储*/
     private var ROOT_PATH: String? = null
     /**内置存储*/
-//    private val ROOT_PATH = Environment.getExternalStorageDirectory().path + "/babacitvd"
+    private val ROOT_PATH_TEST = Environment.getExternalStorageDirectory().path + "/test"
     var dbList_paths: ArrayList<String>? = null
     var dbList_progress: ArrayList<Int>? = null
     var dbList_maxProgress: ArrayList<Int>? = null
@@ -97,49 +102,151 @@ class MainActivity : AutoLayoutActivity() {
      */
     private fun init() {
         val storagePath = SdCardUtil.getStoragePath(this, true)//外置sd卡
-        if (!File(storagePath+ "/babacitvd").exists()) {
-            println("我执行了1")
-            isExistSDCard = false
-        } else {
-            println("我执行了2")
+        val volume = SdCardUtil.getVolume(this)
+        volume.forEach {
+            if (it.getState() != "mounted") {
+                isExistSDCard = false
+            }
+        }
+
+        if(isExistSDCard){//存在外置SD卡
+            addTAllVideo(storagePath)
+            if (!File(storagePath + "/babacitvd").exists()) {
+                println("我执行了1")
+//                isExistSDCard = false
+            } else {
+                println("我执行了2")
 //            val storagePath = SdCardUtil.getStoragePath(this, true)//外置sd卡
-            isExistSDCard = true
-            ROOT_PATH = storagePath + "/babacitvd"
-            val root = File(ROOT_PATH)
-            if (root.exists()) {
-                currentParent = root
-                currentFiles = root.listFiles()
-                if ((currentFiles as Array<out File>?)?.size != 0) {
-                    inflateListView(currentFiles as Array<out File>?)
-                }
-                btn_lw_back.setOnClickListener {
-                    try {
-                        if (!currentParent!!.getCanonicalFile().equals(Environment.getExternalStorageDirectory().path)) {
-                            if (currentParent!!.path.equals(ROOT_PATH)) {
-                                finish()
-                            } else {
-                                currentParent = currentParent!!.getParentFile() //获取上级目录
-                                currentFiles = currentParent!!.listFiles()             //取得当前层所有文件
-                                inflateListView(currentFiles)   //更新列表
-                            }
-                        }
-                    } catch (e: IOException) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace()
+//                isExistSDCard = true
+                ROOT_PATH = storagePath + "/babacitvd"
+                val root = File(ROOT_PATH)
+                if (root.exists()) {
+                    currentParent = root
+                    currentFiles = root.listFiles()
+                    if ((currentFiles as Array<out File>?)?.size != 0) {
+                        inflateListView(currentFiles as Array<out File>?)
                     }
-                }
-            } else {//没有这个目录
+                    btn_lw_back.setOnClickListener {
+                        try {
+                            if (!currentParent!!.getCanonicalFile().equals(Environment.getExternalStorageDirectory().path)) {
+                                if (currentParent!!.path.equals(ROOT_PATH)) {
+                                    finish()
+                                } else {
+                                    if (currentParent!!.parentFile.path == ROOT_PATH) {
+                                        rv_lw_main_t_allVideo.visibility = View.VISIBLE
+                                    }
+                                    currentParent = currentParent!!.getParentFile() //获取上级目录
+                                    currentFiles = currentParent!!.listFiles()             //取得当前层所有文件
+                                    inflateListView(currentFiles)   //更新列表
+                                }
+                            }
+                        } catch (e: IOException) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace()
+                        }
+                    }
+                } else {//没有这个目录
 //                root.mkdir()
 //                init()
 //            tv_lw_main_nothing.visibility = View.VISIBLE
+                }
+            }
+            if (!isExistSDCard) {
+                btn_lw_back.setOnClickListener {
+                    finish()
+                }
             }
         }
-        if (!isExistSDCard) {
-            btn_lw_back.setOnClickListener {
-                finish()
+
+    }
+
+    val currentAllVideoFiles = ArrayList<File>()
+    /**
+     *
+     * 添加T卡内所有视频文件
+     * @param 根目录
+     */
+    private fun addTAllVideo(storagePath: String?) {
+        inflate(storagePath)
+        println("=================" + listAllVideo.toString())
+        println("=================" + listAllVideo_DirOrFile.toString())
+        println("=================" + listAllVideo_isPlayed.toString())
+        println("=================" + listAllVideo_Percent.toString())
+        rv_lw_main_t_allVideo.layoutManager = object : LinearLayoutManager(this) {
+            override fun canScrollVertically(): Boolean = false
+        }
+        rv_lw_main_t_allVideo.adapter = RvAdapter(listAllVideo as List<String>, listAllVideo_DirOrFile, listAllVideo_isPlayed, listAllVideo_Percent, object : RvAdapter.ItemClickListener {
+            override fun itemClick(view: View, position: Int) {
+                val file = currentAllVideoFiles[position]
+                //如果点击的是文件，不做任何处理
+                if (file.isFile) {
+                    val intent = Intent(this@MainActivity, VideoActivity::class.java)
+                    intent.putExtra("VIDEO_PATH", file.path)
+                    intent.putExtra("VIDEO_FILES_PATH", listAllVideo_path as Serializable)
+                    intent.putExtra("VIDEO_POSITION", position)
+                    intent.putExtra("VIDEO_PROGRESS", listAllVideo_preogress[position])
+                    startActivity(intent)
+                }
+            }
+        })
+
+
+    }
+
+
+    /**
+     *
+     * 遍历出所有文件
+     */
+    private fun inflate(path: String?) {
+        if (File(path).exists()) {
+            //存在外置sd卡
+            val root = File(path)
+            val files = root.listFiles()
+            // 1表示文件,0表示文件夹
+            // 1表示已观看,0表示未观看
+            for (i in files!!.indices) {
+                if (files[i].isFile) {
+                    val absolutePath = files[i].absolutePath
+                    if (absolutePath.endsWith(".mp4") || absolutePath.endsWith(".avi")) {//视频支持格式筛选
+                        currentAllVideoFiles.add(files[i])
+                        listAllVideo_DirOrFile.add(1)
+                        if (dbList_paths!!.contains(files[i].path)) {//判断是否观看
+                            //已观看
+                            listAllVideo_isPlayed.add(1)
+                            val db_path = gdAllVideoVideoInfoDao.queryBuilder().where(GDVideoInfoDao.Properties.Video_path.eq(files[i].path)).list()
+                            val video_progress = db_path[0].video_progress.toFloat()
+                            val video_duration = db_path[0].video_duration.toFloat()
+                            listAllVideo_preogress.add(db_path[0].video_progress)
+                            listAllVideo_Percent.add(video_progress / video_duration)
+                        } else {
+                            //未观看
+                            listAllVideo_isPlayed.add(0)
+                            listAllVideo_Percent.add(0f)
+                            listAllVideo_preogress.add(0)
+                        }
+                        listAllVideo.add(files[i].name)
+                        listAllVideo_path.add(files[i].path)
+                    }
+                } else {
+//                    list_DirOrFile.add(0)
+                    //文件夹默认未观看
+//                    list_isPlayed.add(0)
+//                    list_Percent.add(0f)
+//                    list_preogress.add(0)
+                    inflate(files[i].path)//遍历文件夹
+                }
             }
         }
     }
+
+    var listAllVideo = ArrayList<String>()
+    val listAllVideo_path = ArrayList<String>()
+    val listAllVideo_DirOrFile = ArrayList<Int>()
+    val listAllVideo_isPlayed = ArrayList<Int>()//是否观看过存储
+    val listAllVideo_Percent = ArrayList<Float>()
+    val listAllVideo_preogress = ArrayList<Int>()//进度值
+    val gdAllVideoVideoInfoDao = MyApplication().getSession().gdVideoInfoDao
 
     var test: Array<out File>? = null
     var countPlayed = 0
@@ -217,11 +324,14 @@ class MainActivity : AutoLayoutActivity() {
                     startActivity(intent)
                 } else {
 
+
                     val temp = currentFiles!![position].listFiles()
                     if (temp == null || temp.size == 0) {
                         Toast.makeText(applicationContext, getString(R.string.dir_null), Toast.LENGTH_SHORT).show()
                         return
                     }
+                    //隐藏外置所有的视频文件
+                    rv_lw_main_t_allVideo.visibility = View.GONE
                     currentParent = currentFiles!![position]
                     currentFiles = temp
                     inflateListView(currentFiles)
@@ -243,10 +353,13 @@ class MainActivity : AutoLayoutActivity() {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (isExistSDCard) {
                 try {
-                    if (!currentParent!!.getCanonicalFile().equals(Environment.getExternalStorageDirectory().path)) {
+                    if (!currentParent!!.canonicalFile.equals(Environment.getExternalStorageDirectory().path)) {
                         if (currentParent!!.path.equals(ROOT_PATH)) {
                             finish()
                         } else {
+                            if (currentParent!!.parentFile.path == ROOT_PATH) {
+                                rv_lw_main_t_allVideo.visibility = View.VISIBLE
+                            }
                             currentParent = currentParent!!.getParentFile() //获取上级目录
                             currentFiles = currentParent!!.listFiles()             //取得当前层所有文件
                             inflateListView(currentFiles)   //更新列表

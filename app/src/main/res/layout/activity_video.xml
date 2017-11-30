@@ -5,10 +5,10 @@
     android:layout_height="match_parent"
     tools:context="com.example.hekd.learningworld.ui.VideoActivity">
 
+
     <SurfaceView
         android:id="@+id/sv_video"
         android:layout_width="match_parent"
-
         android:layout_height="match_parent" />
 
 
