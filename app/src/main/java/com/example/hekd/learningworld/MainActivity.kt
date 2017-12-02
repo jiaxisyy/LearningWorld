@@ -109,7 +109,7 @@ class MainActivity : AutoLayoutActivity() {
             }
         }
 
-        if(isExistSDCard){//存在外置SD卡
+        if (isExistSDCard) {//存在外置SD卡
             addTAllVideo(storagePath)
             if (!File(storagePath + "/babacitvd").exists()) {
                 println("我执行了1")
@@ -206,37 +206,40 @@ class MainActivity : AutoLayoutActivity() {
             // 1表示文件,0表示文件夹
             // 1表示已观看,0表示未观看
             for (i in files!!.indices) {
-                if (files[i].isFile) {
-                    val absolutePath = files[i].absolutePath
-                    if (absolutePath.endsWith(".mp4") || absolutePath.endsWith(".avi")) {//视频支持格式筛选
-                        currentAllVideoFiles.add(files[i])
-                        listAllVideo_DirOrFile.add(1)
-                        if (dbList_paths!!.contains(files[i].path)) {//判断是否观看
-                            //已观看
-                            listAllVideo_isPlayed.add(1)
-                            val db_path = gdAllVideoVideoInfoDao.queryBuilder().where(GDVideoInfoDao.Properties.Video_path.eq(files[i].path)).list()
-                            val video_progress = db_path[0].video_progress.toFloat()
-                            val video_duration = db_path[0].video_duration.toFloat()
-                            listAllVideo_preogress.add(db_path[0].video_progress)
-                            listAllVideo_Percent.add(video_progress / video_duration)
-                        } else {
-                            //未观看
-                            listAllVideo_isPlayed.add(0)
-                            listAllVideo_Percent.add(0f)
-                            listAllVideo_preogress.add(0)
+                if (!files[i].path.contains("babacitvd")) {
+                    if (files[i].isFile) {
+                        val absolutePath = files[i].absolutePath
+                        if (absolutePath.endsWith(".mp4") || absolutePath.endsWith(".avi")) {//视频支持格式筛选
+                            currentAllVideoFiles.add(files[i])
+                            listAllVideo_DirOrFile.add(1)
+                            if (dbList_paths!!.contains(files[i].path)) {//判断是否观看
+                                //已观看
+                                listAllVideo_isPlayed.add(1)
+                                val db_path = gdAllVideoVideoInfoDao.queryBuilder().where(GDVideoInfoDao.Properties.Video_path.eq(files[i].path)).list()
+                                val video_progress = db_path[0].video_progress.toFloat()
+                                val video_duration = db_path[0].video_duration.toFloat()
+                                listAllVideo_preogress.add(db_path[0].video_progress)
+                                listAllVideo_Percent.add(video_progress / video_duration)
+                            } else {
+                                //未观看
+                                listAllVideo_isPlayed.add(0)
+                                listAllVideo_Percent.add(0f)
+                                listAllVideo_preogress.add(0)
+                            }
+                            listAllVideo.add(files[i].name)
+                            listAllVideo_path.add(files[i].path)
                         }
-                        listAllVideo.add(files[i].name)
-                        listAllVideo_path.add(files[i].path)
-                    }
-                } else {
+                    } else {
 //                    list_DirOrFile.add(0)
-                    //文件夹默认未观看
+                        //文件夹默认未观看
 //                    list_isPlayed.add(0)
 //                    list_Percent.add(0f)
 //                    list_preogress.add(0)
-                    inflate(files[i].path)//遍历文件夹
+                        inflate(files[i].path)//遍历文件夹
+                    }
                 }
             }
+
         }
     }
 
