@@ -14,14 +14,14 @@
         android:layout_height="74px"
         android:background="@drawable/bg_top">
 
-        <TextView
+        <com.example.hekd.learningworld.view.StrokeTextView
             android:id="@+id/tv_lw_main_topName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="国学经典"
-            android:textColor="#ffffff"
-            android:textSize="36px" />
+            android:text="@string/learning_world"
+            android:textColor="#F5913F"
+            android:textSize="22sp" />
 
         <ImageView
             android:id="@+id/btn_lw_back"
@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/btn_lw_back"
-            android:layout_marginTop="13px"
+            android:layout_marginTop="5px"
             android:src="@drawable/topline" />
     </RelativeLayout>
 
