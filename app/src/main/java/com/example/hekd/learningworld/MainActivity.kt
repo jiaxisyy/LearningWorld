@@ -13,6 +13,7 @@ import android.widget.Toast
 import com.example.hekd.learningworld.adapter.RvAdapter
 import com.example.hekd.learningworld.bean.greendao.GDVideoInfoDao
 import com.example.hekd.learningworld.ui.VideoActivity
+import com.example.hekd.learningworld.ui.VideoHelpActivity
 import com.example.hekd.learningworld.util.SdCardUtil
 import com.zhy.autolayout.AutoLayoutActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -20,14 +21,12 @@ import java.io.File
 import java.io.IOException
 import java.io.Serializable
 
-
-private val arrayList: ArrayList<String>
-    get() {
-        val list_videoAllPath = ArrayList<String>()
-        return list_videoAllPath
+class MainActivity : AutoLayoutActivity() {
+    companion object {
+        /**1表示学习天地界面,2表示视频播放*/
+        val VIDEO_TYPE = 2
     }
 
-class MainActivity : AutoLayoutActivity() {
     private var currentParent: File? = null    //记录当前文件的父文件夹
     private var currentFiles: Array<File>? = null
     /**外置存储*/
@@ -48,11 +47,28 @@ class MainActivity : AutoLayoutActivity() {
         //修改字体
         val typeface = Typeface.createFromAsset(assets, "fonts/mini.TTF")
         tv_lw_main_topName.typeface = typeface
-        tv_lw_main_topName.text = getString(R.string.learning_world)
+        if (VIDEO_TYPE == 1) {
+            tv_lw_main_topName.text = getString(R.string.learning_world)
+            btn_video_help.visibility = View.GONE
+            rl_lw_main_nine.visibility = View.VISIBLE
+            initNineOfCourses()
+        } else if (VIDEO_TYPE == 2) {
+            tv_lw_main_topName.text = getString(R.string.video_play)
+            btn_video_help.visibility = View.VISIBLE
+            rl_lw_main_nine.visibility = View.GONE
+            btn_video_help.setOnClickListener {
+
+                startActivity(Intent(this@MainActivity, VideoHelpActivity::class.java))
+            }
+            btn_lw_back.setOnClickListener {
+                finish()
+            }
+        }
         initGreenDao()
         init()
-        initNineOfCourses()
     }
+
+
 
     /**
      * 九门功课
@@ -108,52 +124,54 @@ class MainActivity : AutoLayoutActivity() {
                 isExistSDCard = false
             }
         }
-
         if (isExistSDCard) {//存在外置SD卡
-            addTAllVideo(storagePath)
-            if (!File(storagePath + "/babacitvd").exists()) {
-                println("我执行了1")
+            if (VIDEO_TYPE == 2) {
+                addTAllVideo(storagePath)
+            } else if (VIDEO_TYPE == 1) {
+                if (!File(storagePath + "/babacitvd").exists()) {
+                    println("我执行了1")
 //                isExistSDCard = false
-            } else {
-                println("我执行了2")
+                } else {
+                    println("我执行了2")
 //            val storagePath = SdCardUtil.getStoragePath(this, true)//外置sd卡
 //                isExistSDCard = true
-                ROOT_PATH = storagePath + "/babacitvd"
-                val root = File(ROOT_PATH)
-                if (root.exists()) {
-                    currentParent = root
-                    currentFiles = root.listFiles()
-                    if ((currentFiles as Array<out File>?)?.size != 0) {
-                        inflateListView(currentFiles as Array<out File>?)
-                    }
-                    btn_lw_back.setOnClickListener {
-                        try {
-                            if (!currentParent!!.getCanonicalFile().equals(Environment.getExternalStorageDirectory().path)) {
-                                if (currentParent!!.path.equals(ROOT_PATH)) {
-                                    finish()
-                                } else {
-                                    if (currentParent!!.parentFile.path == ROOT_PATH) {
-                                        rv_lw_main_t_allVideo.visibility = View.VISIBLE
-                                    }
-                                    currentParent = currentParent!!.getParentFile() //获取上级目录
-                                    currentFiles = currentParent!!.listFiles()             //取得当前层所有文件
-                                    inflateListView(currentFiles)   //更新列表
-                                }
-                            }
-                        } catch (e: IOException) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace()
+                    ROOT_PATH = storagePath + "/babacitvd"
+                    val root = File(ROOT_PATH)
+                    if (root.exists()) {
+                        currentParent = root
+                        currentFiles = root.listFiles()
+                        if ((currentFiles as Array<out File>?)?.size != 0) {
+                            inflateListView(currentFiles as Array<out File>?)
                         }
-                    }
-                } else {//没有这个目录
+                        btn_lw_back.setOnClickListener {
+                            try {
+                                if (!currentParent!!.getCanonicalFile().equals(Environment.getExternalStorageDirectory().path)) {
+                                    if (currentParent!!.path.equals(ROOT_PATH)) {
+                                        finish()
+                                    } else {
+                                        if (currentParent!!.parentFile.path == ROOT_PATH) {
+                                            rv_lw_main_t_allVideo.visibility = View.VISIBLE
+                                        }
+                                        currentParent = currentParent!!.getParentFile() //获取上级目录
+                                        currentFiles = currentParent!!.listFiles()             //取得当前层所有文件
+                                        inflateListView(currentFiles)   //更新列表
+                                    }
+                                }
+                            } catch (e: IOException) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace()
+                            }
+                        }
+                    } else {//没有这个目录
 //                root.mkdir()
 //                init()
 //            tv_lw_main_nothing.visibility = View.VISIBLE
+                    }
                 }
-            }
-            if (!isExistSDCard) {
-                btn_lw_back.setOnClickListener {
-                    finish()
+                if (!isExistSDCard) {
+                    btn_lw_back.setOnClickListener {
+                        finish()
+                    }
                 }
             }
         }
@@ -354,7 +372,7 @@ class MainActivity : AutoLayoutActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (isExistSDCard) {
+            if (isExistSDCard && VIDEO_TYPE == 1) {
                 try {
                     if (!currentParent!!.canonicalFile.equals(Environment.getExternalStorageDirectory().path)) {
                         if (currentParent!!.path.equals(ROOT_PATH)) {

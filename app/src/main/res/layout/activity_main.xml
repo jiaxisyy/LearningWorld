@@ -35,6 +35,15 @@
             android:src="@drawable/btn_back_normal" />
 
         <ImageView
+            android:id="@+id/btn_video_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="22px"
+            android:src="@drawable/se_video_help" />
+
+        <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/btn_lw_back"
@@ -51,76 +60,75 @@
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:scrollbars="none"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:scrollbars="none">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
 
+                <RelativeLayout
+                    android:id="@+id/rl_lw_main_nine"
+                    android:layout_width="match_parent"
+                    android:layout_height="77px"
+                    android:background="@drawable/se_lw_tv_center">
 
-            <RelativeLayout
-                android:id="@+id/rl_lw_main_nine"
-                android:layout_width="match_parent"
-                android:layout_height="77px"
-                android:background="@drawable/se_lw_tv_center">
+                    <TextView
+                        android:id="@+id/item_tv_lw_mainName"
+                        style="@style/style_lw_tv_center"
+                        android:text="@string/tv_Nine_of_courses" />
+
+                    <ImageView
+                        android:id="@+id/item_iv_lw_main_more"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="26px"
+                        android:layout_marginTop="37px"
+                        android:src="@drawable/btn_more" />
+
+                    <TextView
+                        android:id="@+id/item_tv_lw_progress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="26px"
+                        android:layout_marginTop="37px"
+                        android:text="已观看50%"
+                        android:textColor="#999999"
+                        android:textSize="18px"
+                        android:visibility="invisible" />
+                </RelativeLayout>
 
                 <TextView
-                    android:id="@+id/item_tv_lw_mainName"
-                    style="@style/style_lw_tv_center"
-                    android:text="@string/tv_Nine_of_courses" />
-
-                <ImageView
-                    android:id="@+id/item_iv_lw_main_more"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="26px"
-                    android:layout_marginTop="37px"
-                    android:src="@drawable/btn_more" />
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_below="@+id/rl_lw_main_nine"
+                    android:background="#f0f0f0" />
 
                 <TextView
-                    android:id="@+id/item_tv_lw_progress"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_lw_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_below="@+id/rl_lw_main_nine"
+                    android:background="#f0f0f0"
+                    android:visibility="gone" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_lw_main"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="26px"
-                    android:layout_marginTop="37px"
-                    android:text="已观看50%"
-                    android:textColor="#999999"
-                    android:textSize="18px"
-                    android:visibility="invisible" />
-            </RelativeLayout>
+                    android:layout_below="@+id/tv_lw_line">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_below="@+id/rl_lw_main_nine"
-                android:background="#f0f0f0" />
+                </android.support.v7.widget.RecyclerView>
 
-            <TextView
-                android:id="@+id/tv_lw_line"
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_below="@+id/rl_lw_main_nine"
-                android:background="#f0f0f0"
-                android:visibility="gone" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_lw_main"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_lw_line">
-
-            </android.support.v7.widget.RecyclerView>
-
-            <!--<include layout="@layout/item_lw_main" />-->
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_lw_main_t_allVideo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/rv_lw_main"></android.support.v7.widget.RecyclerView>
+                <!--<include layout="@layout/item_lw_main" />-->
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_lw_main_t_allVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rv_lw_main"></android.support.v7.widget.RecyclerView>
             </RelativeLayout>
         </android.support.v4.widget.NestedScrollView>
     </RelativeLayout>

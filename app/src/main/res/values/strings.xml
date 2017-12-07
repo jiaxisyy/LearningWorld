@@ -1,16 +1,18 @@
 <resources>
-    <string name="app_name">学习天地</string>
+    <string name="app_name">视频播放</string>
     <string name="tv_ChineseClassics">国学经典</string>
     <string name="tv_fairy_tale">童话故事</string>
     <string name="tv_memory_coding">记忆编码</string>
     <string name="tv_Nine_of_courses">九门功课</string>
     <string name="dir_null">此文件夹不可用或者文件夹为空</string>
     <string name="learning_world">学习天地</string>
+    <string name="video_help">帮助</string>
     <!--视频信息数据库名字-->
     <string name="db_videos_name">videos-db</string>
     <string name="dialog_isContinue">是否继续播放?</string>
     <string name="app_no_install">应用没有安装</string>
     <string name="no_file">已经没有文件了</string>
     <string name="tv_lw_main_nothing">无内容</string>
+    <string name="video_play">视频播放</string>
 
 </resources>
