@@ -29,6 +29,12 @@ android {
         daoPackage 'com.example.hekd.learningworld.bean.greendao'
         targetGenDir 'src/main/java'
     }
+    sourceSets {
+        main {
+            jni.srcDirs = []
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
 }
 allprojects {
     //ijkplayer
