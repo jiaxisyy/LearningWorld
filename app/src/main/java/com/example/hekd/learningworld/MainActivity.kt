@@ -24,7 +24,7 @@ import java.io.Serializable
 class MainActivity : AutoLayoutActivity() {
     companion object {
         /**1表示学习天地界面,2表示视频播放*/
-        val VIDEO_TYPE = 2
+        val VIDEO_TYPE = 1
     }
 
     private var currentParent: File? = null    //记录当前文件的父文件夹
@@ -44,6 +44,8 @@ class MainActivity : AutoLayoutActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        ns_main.smoothScrollTo(0,20)
+        rv_lw_main.isFocusable=false
         //修改字体
         val typeface = Typeface.createFromAsset(assets, "fonts/mini.TTF")
         tv_lw_main_topName.typeface = typeface
@@ -67,7 +69,6 @@ class MainActivity : AutoLayoutActivity() {
         initGreenDao()
         init()
     }
-
 
 
     /**
@@ -168,11 +169,11 @@ class MainActivity : AutoLayoutActivity() {
 //            tv_lw_main_nothing.visibility = View.VISIBLE
                     }
                 }
-                if (!isExistSDCard) {
-                    btn_lw_back.setOnClickListener {
-                        finish()
-                    }
-                }
+
+            }
+        } else {
+            btn_lw_back.setOnClickListener {
+                finish()
             }
         }
 
@@ -388,6 +389,7 @@ class MainActivity : AutoLayoutActivity() {
                     }
                 } catch (e: Exception) {
                     // TODO Auto-generated catch block
+                    finish()
                     e.printStackTrace()
                 }
             } else {

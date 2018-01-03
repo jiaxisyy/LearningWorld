@@ -1,5 +1,6 @@
 package com.example.hekd.learningworld.ui
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -7,10 +8,7 @@ import android.os.Handler
 import android.os.Message
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.Display
-import android.view.LayoutInflater
-import android.view.SurfaceHolder
-import android.view.View
+import android.view.*
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.SeekBar
@@ -27,7 +25,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener, SeekBar.OnSeekBarChangeListener, SurfaceHolder.Callback, MediaPlayer.OnVideoSizeChangedListener {
+class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener, SeekBar.OnSeekBarChangeListener, SurfaceHolder.Callback, MediaPlayer.OnVideoSizeChangedListener{
+
 
 
     override fun onVideoSizeChanged(p0: MediaPlayer?, p1: Int, p2: Int) {
@@ -55,16 +54,26 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
 
     }
 
-
+    @SuppressLint("HandlerLeak")
     private val handler = object : Handler() {
         override fun handleMessage(msg: Message?) {
             super.handleMessage(msg)
-            val i = msg?.obj as Int
-//            println("msg======" + msg?.obj)
-            nowProgress = i
-            sb_video.progress = i
-            val hms = formatter!!.format(i)
-            tv_video_nowTime.text = hms
+
+            when (msg!!.what) {
+                WHAT_PROGRESS -> {
+                    val i = msg?.obj as Int
+                    nowProgress = i
+                    sb_video.progress = i
+                    val hms = formatter!!.format(i)
+                    tv_video_nowTime.text = hms
+                }
+                WHAT_NOTOUTH -> {
+
+
+                }
+
+            }
+
         }
     }
 
@@ -185,6 +194,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
     var holder: SurfaceHolder? = null
     var player: MediaPlayer? = null
     var currDisplay: Display? = null
+    /**视频控制按钮是否显示*/
     var isShowControl: Boolean = false
     var files: Array<File>? = null
     var nowPosition: Int = 0
@@ -213,6 +223,10 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
     var nowProgress: Int = 0
     /**当前视频总进度*/
     var nowMaxProgress: Int = 0
+    /**无触摸后视频隐藏*/
+    val WHAT_NOTOUTH = 10001
+    /**开启进度条*/
+    val WHAT_PROGRESS = 10002
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -231,7 +245,11 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
             if (!isShowControl) { //显示控制按钮
                 rl_videoTop.visibility = View.VISIBLE
                 rl_videoBottom.visibility = View.VISIBLE
-                isShowControl = true
+                isShowControl = !isShowControl
+            }else{
+                rl_videoTop.visibility = View.INVISIBLE
+                rl_videoBottom.visibility = View.INVISIBLE
+                isShowControl = !isShowControl
             }
         }
 
@@ -242,6 +260,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
         holder?.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
 
         player = MediaPlayer()
+
         player?.setOnCompletionListener(this)
         player?.setOnErrorListener(this)
         player?.setOnInfoListener(this)
@@ -249,6 +268,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
         player?.setOnSeekCompleteListener(this)
         player?.setOnVideoSizeChangedListener(this)
         sb_video.setOnSeekBarChangeListener(this)
+
         //视频当前文件路径
         val path = intent.getStringExtra("VIDEO_PATH")
         initErrorDialog()
@@ -475,6 +495,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
                     val currentPosition1 = player?.currentPosition
                     val message = Message()
                     message.obj = currentPosition1
+                    message.what = WHAT_PROGRESS
                     handler.sendMessage(message)
                     try {
                         Thread.sleep(500)
@@ -489,6 +510,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
 
     override fun onDestroy() {
         // TODO Auto-generated method stub
+
         super.onDestroy()
         if (player!!.isPlaying) {
             player!!.stop()
@@ -509,7 +531,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, Med
 //        player?.start()
 ////        player?.setDisplay(holder)
     }
-
 
 
 }

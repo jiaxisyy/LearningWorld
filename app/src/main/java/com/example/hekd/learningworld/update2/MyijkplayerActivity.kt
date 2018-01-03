@@ -41,8 +41,6 @@ class MyijkplayerActivity : AutoLayoutActivity(), SurfaceHolder.Callback, IMedia
         ijkPlayer!!.setDisplay(p0)
         ijkPlayer!!.prepareAsync()
     }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ijk)
